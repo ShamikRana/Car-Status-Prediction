@@ -5,13 +5,16 @@ import numpy as np
 
 app = Flask(__name__)
 
+# Load the model and the columns
 with open("model.pickle", "rb") as f:
     model = pickle.load(f)
 
+# Load the columns
 with open("columns.json", "r") as f:
     columns = json.load(f)["data_columns"]
 
-def predict_status(Model, Year, Price):
+# Function to predict the status of the car
+def predict_status(Model: str, Year: int, Price: float) -> str:
     index = np.where(np.array(columns) == Model)[0]
     x = np.zeros(len(columns))
     x[0] = Year
@@ -23,12 +26,14 @@ def predict_status(Model, Year, Price):
     if status == 1:
         return "New"
     
+# Home page
 @app.route("/")
-def home():
+def home() -> str:
     return render_template("home.html")
 
+# Predict page
 @app.route("/predict", methods = ["POST"])
-def predict():
+def predict() -> str:
     model = request.form["model"]
     year = int(request.form["year"])
     price = float(request.form["price"])
